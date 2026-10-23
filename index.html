@@ -1,0 +1,455 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Mnemo — a wearable memory assistant</title>
+  <meta name="description" content="Mnemo watches through a chest-worn camera, writes down what the wearer did as short time-stamped text, never stores video, and answers questions only from that record.">
+  <meta property="og:title" content="Mnemo — a wearable memory assistant">
+  <meta property="og:description" content="Remembers what you did, not what you saw. A small always-on model decides when a vision-language model looks; answers come only from a text diary.">
+  <meta name="theme-color" content="#f7f6f2">
+  <link rel="icon" href="assets/img/favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/site.css">
+  <script>try { var t = localStorage.getItem("mnemo-theme"); if (t) document.documentElement.dataset.theme = t; } catch (e) {}</script>
+</head>
+<body>
+
+<header class="bar" id="top">
+  <div class="wrap">
+    <a class="brand" href="#top" aria-label="Mnemo, back to top"><b>Mnemo</b><span>ENGRAM</span></a>
+    <button class="menu-btn" aria-expanded="false" aria-controls="nav">Menu</button>
+    <nav class="nav" id="nav" aria-label="Sections">
+      <a href="#problem">Problem</a>
+      <a href="#objectives">Objectives</a>
+      <a href="#method">Method</a>
+      <a href="#results">Results</a>
+      <a href="#demo">Demo</a>
+      <a href="#progress">Progress</a>
+      <a href="#team">Team</a>
+      <a href="docs.html">Docs</a>
+      <a href="https://github.com/slikhithreddy22/MNemo">GitHub ↗</a>
+      <button class="icon-btn theme-toggle" aria-label="Switch colour theme" title="Switch colour theme">
+        <svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="6.25" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M8 1.75a6.25 6.25 0 0 1 0 12.5z" fill="currentColor"/></svg>
+      </button>
+    </nav>
+  </div>
+</header>
+
+<main>
+
+<!-- ───────────── hero ───────────── -->
+<section class="hero">
+  <div class="wrap">
+    <div class="eyebrow">Final-year B.Tech project · Computer Science · 2026</div>
+    <h1>Remembers what you <em>did</em>,<br> not what you saw.</h1>
+    <div class="hero-cols">
+      <div>
+      <p class="lead">Mnemo is a memory assistant for a chest-worn camera. A small model watches the wearer's hands and
+        decides when something worth remembering happens. Only then does a vision-language model look, and it writes
+        one short, time-stamped line of text. No frame is ever stored. Questions are answered from that diary
+        alone, with times. If the diary has no answer, Mnemo says so.</p>
+      <div class="actions">
+        <a class="btn solid" href="#demo">Watch the demo <span class="arr">↓</span></a>
+        <a class="btn" href="docs.html">Documentation</a>
+        <a class="btn" href="https://github.com/slikhithreddy22/MNemo">Source code <span class="arr">↗</span></a>
+      </div>
+      </div>
+
+    <figure class="diary" aria-label="Excerpt of a real reference diary written by Mnemo">
+      <div class="diary-head"><span class="rec">reference diary</span><span>text only · no video kept</span></div>
+      <div class="diary-body reveal">
+        <div class="dl" style="animation-delay:.15s"><span class="t">09:22:34</span><span>turns off tap <span class="p">· kitchen counter</span><span class="tag">state</span></span></div>
+        <div class="dl" style="animation-delay:.45s"><span class="t">09:22:42</span><span>puts down coffee maker <span class="p">· counter</span></span></div>
+        <div class="dl" style="animation-delay:.75s"><span class="t">09:22:46</span><span>opens fridge <span class="p">· kitchen</span></span></div>
+        <div class="dl" style="animation-delay:1.05s"><span class="t">09:22:46</span><span>picks up milk bottle <span class="p">· kitchen</span></span></div>
+        <div class="dl" style="animation-delay:1.35s"><span class="t">09:22:46</span><span>closes fridge <span class="p">· kitchen</span></span></div>
+        <div class="dl" style="animation-delay:1.65s"><span class="t">09:23:02</span><span>puts down box of cornflakes <span class="p">· counter</span></span></div>
+        <div class="dl" style="animation-delay:1.95s"><span class="t">09:23:14</span><span>pours coffee <span class="p">· into cup</span></span></div>
+        <div class="qa" style="animation-delay:2.5s">
+          <div class="q">When did I open the fridge?</div>
+          <div class="a">At 09:22:46 (kitchen), 09:52:50 (kitchen counter), 09:53:14 …</div>
+          <div class="q">Did I take my medicine?</div>
+          <div class="a" style="margin-bottom:0">I didn't see that in my records.</div>
+        </div>
+      </div>
+      <figcaption class="diary-foot">Real output, unedited. From the 2.4-hour test morning built from EPIC-KITCHENS-100 clips.</figcaption>
+    </figure>
+    </div>
+  </div>
+</section>
+
+<!-- ───────────── key figures ───────────── -->
+<div class="figures" aria-label="Key results">
+  <div class="wrap">
+    <div class="fig"><div class="v">0.24<small> M</small></div><div class="k">parameters in the always-on model that decides when the large model looks</div></div>
+    <div class="fig"><div class="v">17 <small>→</small> 30</div><div class="k">open, close and on/off actions found with object-state memory (of 69)</div></div>
+    <div class="fig"><div class="v">76% <small>vs 66%</small></div><div class="k">questions about a whole morning answered correctly, vs. the VLM shown the morning</div></div>
+    <div class="fig"><div class="v">0 <small>of 14</small></div><div class="k">events invented when asked about things that never happened</div></div>
+  </div>
+</div>
+
+<!-- ───────────── 01 problem ───────────── -->
+<section class="section" id="problem">
+  <div class="wrap sec-grid">
+    <div class="sec-label"><b>01</b>Problem</div>
+    <div>
+      <h2>Did I close the fridge? Did I take my pills? For some people, these are hard questions.</h2>
+      <div class="prose">
+        <p>People with short-term memory difficulties, from early cognitive decline to executive-function problems,
+          often cannot tell whether they switched off the stove, where they put their keys, or whether they already
+          took today's medicine. The answer was in front of them a few minutes ago. A camera worn on the chest sees
+          those moments from the wearer's own point of view, so walls and furniture don't block it the way they
+          block a fixed room camera.</p>
+        <p>The hard part is what to do with the video. <strong>Our problem statement:</strong> build a wearable assistant
+          that turns first-person video into a compact, trustworthy record of the wearer's own actions. It must answer
+          questions about the past, with times, without storing footage and without inventing events.</p>
+      </div>
+      <div class="cols-3">
+        <div><span class="n">01 · Storage</span><h3>Video is costly and intrusive</h3><p>Hours of footage a day are expensive to keep, slow to search, and capture everyone else in the home.</p></div>
+        <div><span class="n">02 · Compute</span><h3>Large models can't watch everything</h3><p>On a T4 GPU, describing every 4-second window took 1.64 s per second of video, which is slower than real time.</p></div>
+        <div><span class="n">03 · Trust</span><h3>A memory aid must not make things up</h3><p>For someone who relies on it, a confident wrong answer is worse than no answer. Every answer must point to a recorded moment.</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ───────────── 02 objectives ───────────── -->
+<section class="section" id="objectives">
+  <div class="wrap sec-grid">
+    <div class="sec-label"><b>02</b>Objectives</div>
+    <div>
+      <h2>Six objectives, each with a way to check it.</h2>
+      <ol class="objectives">
+        <li><span class="n">O1</span><div><h3>Decide when to look</h3><p>A small always-on model picks the moments with hand–object interaction, so the expensive model runs less often.</p></div><div class="how"><b>Measured by</b>Actions kept vs. evenly spaced calls with the same budget, on people never seen in training.</div></li>
+        <li><span class="n">O2</span><div><h3>Keep a compact, searchable record</h3><p>Structured text lines (time, action, object, place) in one SQLite table, instead of captions or video.</p></div><div class="how"><b>Measured by</b>Diary recall and precision against EPIC-KITCHENS annotations; size on disk.</div></li>
+        <li><span class="n">O3</span><div><h3>Remember the state of things</h3><p>Track fridge, oven, tap, stove and other objects as open/closed and on/off, and warn about what was left open.</p></div><div class="how"><b>Measured by</b>Opening, closing and switching actions found, with and without state memory.</div></li>
+        <li><span class="n">O4</span><div><h3>Answer only from the record</h3><p>Give times and places, or reply "I didn't see that in my records." Never guess.</p></div><div class="how"><b>Measured by</b>Accuracy and invented events, against asking the VLM directly, over one minute and over a whole morning.</div></li>
+        <li><span class="n">O5</span><div><h3>Private by construction</h3><p>Frames stay in RAM only while their window is processed. Nothing visual reaches the disk.</p></div><div class="how"><b>Measured by</b>An automated test runs the real pipeline with every image-writing function blocked.</div></li>
+        <li><span class="n">O6</span><div><h3>Run on modest hardware</h3><p>The small lane runs on a CPU. The large model fits on one 16 GB T4 GPU.</p></div><div class="how"><b>Measured by</b>Seconds of compute per second of video for each lane.</div></li>
+      </ol>
+    </div>
+  </div>
+</section>
+
+<!-- ───────────── 03 method ───────────── -->
+<section class="section" id="method">
+  <div class="wrap sec-grid">
+    <div class="sec-label"><b>03</b>Methodology</div>
+    <div>
+      <h2>Two models: a cheap one that is always on, and an expensive one that only looks when asked.</h2>
+      <p class="prose">Video is cut into 4-second windows, matching EPIC-KITCHENS-100's own action lengths: the median
+        action lasts 1.6 s, and 81% are shorter than 4 s. The upper lane runs on every frame. The lower lane runs only
+        for windows the small model selects, plus one every 20 seconds as a heartbeat, to keep places and object
+        states current.</p>
+
+      <div class="pipe" role="img" aria-label="Pipeline: wearable camera, perception, HOI-TCN small model and an interaction decision run always on. Selected windows go to Qwen3-VL-4B, then state memory, the reference diary and grounded question answering.">
+        <div class="lane">
+          <div class="lane-label">Always on · every frame · CPU</div>
+          <div class="lane-row l1">
+            <div class="node"><div class="nt">Wearable camera</div><div class="ns">chest-worn, 10 fps, frames never stored</div></div>
+            <div class="arrow"><span class="h">→</span></div>
+            <div class="node"><div class="nt">Perception</div><div class="ns">MediaPipe hands, YOLOv8n objects, camera motion</div></div>
+            <div class="arrow"><span class="h">→</span></div>
+            <div class="node ours"><div class="nt">HOI-TCN</div><div class="ns">causal temporal CNN, 0.24 M params; scores each 4-s window</div></div>
+            <div class="arrow"><span class="h">→</span></div>
+            <div class="node decision"><div class="nt">Interaction?</div><div class="ns">no → nothing is stored</div></div>
+          </div>
+        </div>
+        <div class="between">yes, or 20 s since the last look</div>
+        <div class="lane">
+          <div class="lane-label">On demand · selected windows only · GPU</div>
+          <div class="lane-row l2">
+            <div class="node"><div class="nt">Qwen3-VL-4B</div><div class="ns">8 frames per window → place, actions and object states</div></div>
+            <div class="arrow"><span class="h">→</span></div>
+            <div class="node ours"><div class="nt">State memory</div><div class="ns">open/closed, on/off; re-checks, alerts</div></div>
+            <div class="arrow"><span class="h">→</span></div>
+            <div class="node ours"><div class="nt">Reference diary</div><div class="ns">SQLite, text only: time, action, object, place</div></div>
+            <div class="arrow"><span class="h">→</span></div>
+            <div class="node ours"><div class="nt">Answers</div><div class="ns">only from matching diary rows, with times</div></div>
+          </div>
+        </div>
+      </div>
+
+      <ol class="steps">
+        <li><span class="n">1</span><p><b>Perception.</b> Each frame becomes a 105-number feature: 45 per hand (landmarks, position, velocity), 13 for the object nearest a hand, and 2 for camera motion. Velocities are measured relative to the background, so walking or turning doesn't look like hand movement.</p></li>
+        <li><span class="n">2</span><p><b>Decide when to look.</b> HOI-TCN gives each frame a probability of <i>pick-up</i>, <i>put-down</i> or <i>none</i>. A window is sent on when its score, the maximum of 1 − P(none), reaches τ = 0.6, or when 20 s have passed without a look.</p></li>
+        <li><span class="n">3</span><p><b>Describe in fixed lines, not captions.</b> The VLM fills a fixed form with everyday verbs. That cuts output from about 101 to 46 tokens per window, and generation stops at the first repeated line.</p>
+          <div class="lines-sample">PLACE: kitchen counter<br>STATE: fridge = open<br>DID: put | milk | fridge</div></li>
+        <li><span class="n">4</span><p><b>Remember states.</b> A change from <i>open</i> to <i>closed</i> becomes the row <i>closes fridge</i>. The VLM rarely volunteers "closed" (1 time in 120 windows), so Mnemo asks it again about up to three objects it believes are still open.</p></li>
+        <li><span class="n">5</span><p><b>Answer from the diary.</b> The question's time range and keywords select up to 60 rows. The same model answers in one to three sentences using only those rows, with times. Otherwise it replies exactly: "I didn't see that in my records."</p></li>
+        <li><span class="n">6</span><p><b>Store nothing visual.</b> A 2.4-hour morning became 636 rows in a 240 kB file. The video is gone as soon as its window is processed.</p></li>
+      </ol>
+
+      <div class="block">
+        <h3>Inside the small model</h3>
+        <div class="table-wrap">
+          <table class="spec">
+            <tbody>
+              <tr><td>Input</td><td>105 features per frame at 10 fps: hands, nearest object, camera motion</td></tr>
+              <tr><td>Encoders</td><td>One per modality (64 units for hands, 32 for the object, 8 for camera motion), then a 1×1 projection to 96 channels</td></tr>
+              <tr><td>Temporal blocks</td><td>4 residual blocks, each with two causal convolutions (kernel 3, dilation 1, 2, 4, 8), layer norm, GELU, dropout 0.2</td></tr>
+              <tr><td>Receptive field</td><td>61 frames, about 6 seconds, past frames only, so it runs live</td></tr>
+              <tr><td>Parameters</td><td>240,252</td></tr>
+              <tr><td>Training data</td><td>EPIC-KITCHENS-100 take/put, split by person: 22 people for training, 5 for validation, 5 for testing</td></tr>
+              <tr><td>Training</td><td>AdamW (lr 10⁻³), class-weighted cross-entropy plus a holding head, random modality dropout, early stopping on validation F1</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ───────────── 04 results ───────────── -->
+<section class="section" id="results">
+  <div class="wrap sec-grid">
+    <div class="sec-label"><b>04</b>Results</div>
+    <div>
+      <h2>Measured on people the model never saw.</h2>
+      <p class="prose">The test set is 20 random one-minute EPIC-KITCHENS-100 clips from five people held out of training,
+        with 307 annotated actions, 69 of them opening, closing or switching. Qwen3-VL-4B ran on a single Kaggle T4.
+        Scoring is strict: a diary row counts only with the exact EPIC verb and noun class within ±2 s. All systems
+        are scored on the same VLM outputs, so the comparisons are fair even where the absolute numbers look low.</p>
+
+      <div class="chart-card" id="chart-trigger">
+        <div class="chart-title">With 74% of the VLM calls, the trigger keeps 86 actions. Evenly spaced calls keep 75.</div>
+        <div class="chart-sub">Actions found against the share of 4-second windows sent to the VLM. At tighter budgets, the fixed rate is as good or slightly better.</div>
+        <div class="legend"><span><i style="background:var(--accent)"></i>HOI-TCN trigger (ours)</span><span><i style="background:var(--base)"></i>Every N-th window, same number of calls</span></div>
+        <div class="chart" data-chart="trigger"></div>
+        <details class="data"><summary>Data table</summary>
+          <div class="table-wrap"><table>
+            <thead><tr><th>Windows sent</th><th class="num">VLM s / video s</th><th class="num">Trigger</th><th class="num">Every N-th</th></tr></thead>
+            <tbody>
+              <tr><td>39% (τ = 0.8)</td><td class="num">0.66</td><td class="num">49</td><td class="num">54</td></tr>
+              <tr><td>59% (τ = 0.7)</td><td class="num">0.99</td><td class="num">66</td><td class="num">73</td></tr>
+              <tr class="hl"><td>74% (τ = 0.6)</td><td class="num">1.22</td><td class="num">86</td><td class="num">75</td></tr>
+              <tr><td>89% (τ = 0.5)</td><td class="num">1.44</td><td class="num">91</td><td class="num">92</td></tr>
+              <tr><td>100% (every window)</td><td class="num">1.64</td><td class="num">94</td><td class="num">94</td></tr>
+            </tbody>
+          </table></div>
+          <p class="muted">At τ = 0.6, the gain over clips is +11 actions (95% bootstrap interval +2 to +20). The trigger is better on 8 clips, equal on 10 and worse on 2.</p>
+        </details>
+      </div>
+
+      <div class="chart-card" id="chart-states">
+        <div class="chart-title">Object-state memory nearly doubles the opening, closing and switching actions found.</div>
+        <div class="chart-sub">Same VLM outputs, every window described: plain captions vs. captions with state memory and re-checks.</div>
+        <div class="legend"><span><i class="dot" style="background:var(--base)"></i>Plain captions</span><span><i class="dot" style="background:var(--accent)"></i>With state memory (ours)</span></div>
+        <div class="chart" data-chart="states"></div>
+        <details class="data"><summary>Data table</summary>
+          <div class="table-wrap"><table>
+            <thead><tr><th>Measure</th><th class="num">Captions</th><th class="num">+ States</th></tr></thead>
+            <tbody>
+              <tr><td>Open / close / on / off found (of 69)</td><td class="num">17 (25%)</td><td class="num">30 (43%)</td></tr>
+              <tr><td>All actions found (of 307)</td><td class="num">81 (26%)</td><td class="num">94 (31%)</td></tr>
+              <tr><td>Diary rows correct (precision)</td><td class="num">15%</td><td class="num">15%</td></tr>
+              <tr><td>Question accuracy, 1-minute clips</td><td class="num">77%</td><td class="num">80%</td></tr>
+            </tbody>
+          </table></div>
+          <p class="muted">Per clip, the memory adds 13 actions in total (95% interval +4 to +24). It helps on 7 clips and is never worse.</p>
+        </details>
+      </div>
+
+      <div class="chart-card" id="chart-span">
+        <div class="chart-title">Over a minute, asking the VLM directly wins. Over a morning, the diary wins.</div>
+        <div class="chart-sub">Share of yes/no questions answered correctly. Direct VLM: 32 frames of the clip, or of the whole 2.4-hour morning. Mnemo: its diary, with the trigger at τ = 0.6.</div>
+        <div class="legend"><span><i style="background:var(--accent)"></i>Mnemo (diary)</span><span><i style="background:var(--base)"></i>Direct VLM, no memory</span></div>
+        <div class="chart" data-chart="span"></div>
+        <details class="data"><summary>Data table</summary>
+          <div class="table-wrap"><table>
+            <thead><tr><th>Period</th><th>System</th><th class="num">Yes → yes</th><th class="num">Invented</th><th class="num">Accuracy</th></tr></thead>
+            <tbody>
+              <tr><td>1 minute (226 q.)</td><td>Mnemo</td><td class="num">55 / 106</td><td class="num">3 / 120</td><td class="num">76%</td></tr>
+              <tr><td></td><td>Direct VLM</td><td class="num">80 / 106</td><td class="num">1 / 120</td><td class="num">88%</td></tr>
+              <tr><td>2.4 hours (38 q.)</td><td>Mnemo</td><td class="num">15 / 24</td><td class="num">0 / 14</td><td class="num">76%</td></tr>
+              <tr><td></td><td>Direct VLM</td><td class="num">12 / 24</td><td class="num">1 / 14</td><td class="num">66%</td></tr>
+            </tbody>
+          </table></div>
+          <p class="muted">Mnemo also gave the right clock time for 15 of 24 "When did I…?" questions about the morning. The direct VLM cannot answer those.</p>
+        </details>
+      </div>
+
+      <div class="block">
+        <h3>The small model on its own</h3>
+        <p class="prose" style="font-size:15.5px">Pick-up and put-down events on held-out people, matched within ±1 s. Recall matters more than precision here: a false alarm costs one VLM call, but a miss can lose a diary row. Each ablation removes one feature group at test time.</p>
+        <div class="table-wrap"><table>
+          <thead><tr><th>Features</th><th class="num">Pick F1</th><th class="num">Put F1</th><th class="num">Precision</th><th class="num">Recall</th><th class="num">F1</th></tr></thead>
+          <tbody>
+            <tr class="hl"><td>All</td><td class="num">0.555</td><td class="num">0.505</td><td class="num">0.446</td><td class="num">0.652</td><td class="num">0.529</td></tr>
+            <tr><td>No object</td><td class="num">0.563</td><td class="num">0.485</td><td class="num">0.424</td><td class="num">0.682</td><td class="num">0.523</td></tr>
+            <tr><td>No camera motion</td><td class="num">0.543</td><td class="num">0.453</td><td class="num">0.434</td><td class="num">0.581</td><td class="num">0.497</td></tr>
+            <tr><td>No hands</td><td class="num">0.495</td><td class="num">0.463</td><td class="num">0.428</td><td class="num">0.544</td><td class="num">0.479</td></tr>
+          </tbody>
+        </table></div>
+      </div>
+
+      <div class="honest">
+        <div><h3>Where it doesn't win</h3><p>On one-minute clips, asking the VLM directly scores 88% against Mnemo's 76%. Thirty-two frames cover a minute well. The diary pays off over hours.</p></div>
+        <div><h3>Tight budgets</h3><p>Below about 60% of calls, evenly spaced calls find as many actions or slightly more, within noise. τ = 0.6 was read off this curve, so every threshold is reported.</p></div>
+        <div><h3>What the numbers cover</h3><p>Kitchens only, filmed with head-mounted cameras. The morning joins separate clips and has 38 questions. There has been no user study yet.</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ───────────── 05 demo ───────────── -->
+<section class="section" id="demo">
+  <div class="wrap sec-grid">
+    <div class="sec-label"><b>05</b>Demonstration</div>
+    <div>
+      <h2>One minute of video, and the diary Mnemo wrote for it.</h2>
+      <p class="prose">Press play. The bars show HOI-TCN's real score for each 4-second window. Blue windows were sent to
+        Qwen3-VL-4B, and grey ones were skipped. Diary rows appear when their window finishes. Switch tabs to compare
+        them with what the EPIC-KITCHENS annotators wrote.</p>
+
+      <div class="player" id="player">
+        <div>
+          <div class="screen">
+            <video id="replay" src="assets/video/replay_P02_08.mp4" poster="assets/img/poster_replay.jpg" controls muted playsinline preload="metadata"></video>
+          </div>
+          <div class="timeline">
+            <div class="tl-head"><span>HOI-TCN score per 4-s window</span><span><span class="key"><i style="background:var(--accent)"></i>sent to VLM</span><span class="key"><i style="background:var(--rule-strong)"></i>skipped</span><span class="key"><i class="dash"></i>τ = 0.6</span></span></div>
+            <div class="tl" id="tl" aria-label="Windows of the clip. Select one to jump there."></div>
+            <div class="tl-axis"><span>0:00</span><span>0:15</span><span>0:30</span><span>0:45</span><span>1:00</span></div>
+          </div>
+        </div>
+        <div class="panel">
+          <div class="tabs" role="tablist">
+            <button role="tab" aria-selected="true" data-tab="diary">Mnemo's diary</button>
+            <button role="tab" aria-selected="false" data-tab="truth">What really happened</button>
+          </div>
+          <div class="rows" id="rows" aria-live="polite"></div>
+          <div class="panel-foot" id="rows-foot"></div>
+        </div>
+      </div>
+      <p class="caption">Clip P02_08 from 0:03 (EPIC-KITCHENS-100). This person was never seen in training. Window scores, VLM calls
+        and diary lines are the real outputs of the benchmark run, not re-created for this page.</p>
+
+      <div class="block" id="ask">
+        <h3>Ask about the whole morning</h3>
+        <p class="prose" style="font-size:15.5px">These are the 38 real test questions about the 2.4-hour morning, and both systems' actual answers.
+          Some are about things that never happened, to see whether a system invents them.</p>
+        <div class="ask">
+          <div>
+            <div class="filters" role="group" aria-label="Filter questions">
+              <button class="chip" aria-pressed="true" data-f="all">All 38</button>
+              <button class="chip" aria-pressed="false" data-f="yes">Happened</button>
+              <button class="chip" aria-pressed="false" data-f="no">Never happened</button>
+              <button class="chip" aria-pressed="false" data-f="when">When…?</button>
+            </div>
+            <ul class="qlist" id="qlist"></ul>
+          </div>
+          <div class="answer" id="answer" aria-live="polite"></div>
+        </div>
+      </div>
+
+      <div class="search block" id="search">
+        <h3>Search the morning's diary</h3>
+        <p class="prose" style="font-size:15.5px">All <span id="n-rows">636</span> rows Mnemo wrote for the morning, unedited, including the mistakes.</p>
+        <label class="sr-only" for="q">Search the diary</label>
+        <input id="q" type="search" placeholder="Try: fridge, tap, knife, opens …" autocomplete="off">
+        <div class="rows" id="srows"></div>
+      </div>
+
+      <div class="videos">
+        <figure>
+          <video src="assets/video/tracker_P02_102.mp4" poster="assets/img/poster_tracker.jpg" controls muted playsinline preload="none"></video>
+          <figcaption><b>CPU mode: hands and object tracking</b>The original pick-up / put-down tracker on a laptop CPU: MediaPipe hands, open-vocabulary object boxes and the rule engine. EPIC-KITCHENS-100 clip P02_102.</figcaption>
+        </figure>
+        <figure>
+          <video src="assets/video/replay_P02_08.mp4" poster="assets/img/poster_replay.jpg" controls muted playsinline preload="none"></video>
+          <figcaption><b>The benchmark clip, without overlays</b>The same minute the diary above was written from: what the camera saw, frame by frame. None of it is stored by Mnemo.</figcaption>
+        </figure>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ───────────── 06 progress ───────────── -->
+<section class="section" id="progress">
+  <div class="wrap sec-grid">
+    <div class="sec-label"><b>06</b>Progress</div>
+    <div>
+      <h2>From a frame-by-frame prototype to a measured system.</h2>
+      <ol class="timeline-list">
+        <li><div class="d">Jul 27, 2026</div><div class="c"><h3>Project started</h3><p>Repository and project structure. A video source with timestamps and a first motion detector followed in early August.</p></div></li>
+        <li><div class="d">Aug 2026</div><div class="c"><h3>First prototype</h3><p>MediaPipe hands, YOLO objects, optical flow, a CLIP zero-shot action classifier and an event binder. Module 1–3 demos on Sep 2.</p></div></li>
+        <li><div class="d">Oct 15</div><div class="c"><h3>Rebuild around HOI-TCN</h3><p>One frame cannot tell a pick-up from a put-down, so the prototype was replaced by a causal temporal model on hand, object and camera-motion features, trained on public data split by person.</p></div></li>
+        <li><div class="d">Oct 16</div><div class="c"><h3>Diary and grounded answers</h3><p>Qwen3-VL-4B writes the diary, and answers come only from it. Benchmarks on Kaggle T4s: interaction trigger vs. fixed rate, object-state memory, whole-morning questions.</p></div></li>
+        <li><div class="d">Oct 19</div><div class="c"><h3>Ego4D experiment built</h3><p>Natural Language Queries such as "Where did I put the drill?" on Ego4D, with development clips kept out of the reported test.</p></div></li>
+        <li><div class="d">Oct 22</div><div class="c"><h3>Paper draft: ENGRAM</h3><p>IEEE conference draft: <i>Egocentric Neural Grounded Retrieval of Actions and Moments for Wearable Memory Assistance</i>.</p></div></li>
+        <li class="now"><div class="d">Oct 23</div><div class="c"><h3>Open source</h3><p>Code, trained trigger and documentation published under the MIT licence.</p></div></li>
+        <li class="next"><div class="d">Next</div><div class="c"><h3>Ego4D full run <span class="status wip">in progress</span></h3><p>Episodic-memory questions beyond kitchens, on clips held out from all tuning.</p></div></li>
+        <li class="next"><div class="d">Planned</div><div class="c"><h3>Search, real recordings, app <span class="status">planned</span></h3><p>Hybrid keyword and vector search over the diary, continuous chest-camera recordings, a mobile app, and a user study with ethical approval.</p></div></li>
+      </ol>
+    </div>
+  </div>
+</section>
+
+<!-- ───────────── 07 team ───────────── -->
+<section class="section" id="team">
+  <div class="wrap sec-grid">
+    <div class="sec-label"><b>07</b>Team</div>
+    <div>
+      <h2>The people behind Mnemo.</h2>
+      <p class="prose">A final-year B.Tech Computer Science project at Amrita Vishwa Vidyapeetham, Coimbatore.</p>
+      <p class="prose">The team consists of students and faculty members who are passionate about creating innovative solutions for wearable memory assistance.</p>
+      <!-- EDIT TEAM: one .member block per person (name, role, optional link). -->
+      <!-- <div class="team">
+        <div class="member"><div class="nm">Team member</div><div class="rl">Team lead · models and system design</div><div class="ln"><a href="https://github.com/slikhithreddy22">github.com/slikhithreddy22</a></div></div>
+        <div class="member"><div class="nm">Team member</div><div class="rl">Back</div></div>
+        <div class="member"><div class="nm">Team member</div><div class="rl">Role</div></div>
+        <div class="member"><div class="nm">Team member</div><div class="rl">Role</div></div>
+      </div>
+      <div class="guide"><div class="lab">Project guide</div><div><div class="nm" style="font-weight:500">Dr. Raghesh Krishnan K</div><div class="muted" style="font-size:14.5px">Amrita Vishwa Vidyapeetham, Coimbatore</div></div></div> -->
+    </div>
+  </div>
+</section>
+
+<!-- ───────────── 08 docs & code ───────────── -->
+<section class="section" id="docs">
+  <div class="wrap sec-grid">
+    <div class="sec-label"><b>08</b>Documentation</div>
+    <div>
+      <h2>Everything needed to run it, check it and build on it.</h2>
+      <div class="links">
+        <a class="link-card" href="docs.html"><div class="lt">Documentation <span>→</span></div><p>Installation, commands, configuration, architecture, experiments and licences.</p></a>
+        <a class="link-card" href="https://github.com/slikhithreddy22/MNemo"><div class="lt">GitHub repository <span>↗</span></div><p>Source code, trained HOI-TCN, tests and the Kaggle notebooks. MIT licence.</p></a>
+        <a class="link-card" href="docs.html#reproduce"><div class="lt">Reproduce the results <span>→</span></div><p>One Kaggle notebook runs the whole benchmark on a free T4 GPU.</p></a>
+      </div>
+      <div class="cite">
+        <button class="copy" data-copy="bib">Copy</button>
+<pre id="bib">@software{mnemo2026,
+  title  = {Mnemo: a wearable memory assistant with an
+            interaction-triggered reference diary},
+  author = {{The Mnemo authors}},
+  year   = {2026},
+  url    = {https://github.com/slikhithreddy22/MNemo}
+}</pre>
+      </div>
+      <p class="muted" style="font-size:14px;margin-top:10px">The ENGRAM paper is in preparation. Its citation will replace this entry once it is published.</p>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<footer class="foot">
+  <div class="wrap">
+    <div>
+      <p><b style="color:var(--ink);font-weight:500">Mnemo</b> · code under the MIT licence · <a href="https://github.com/slikhithreddy22/MNemo">GitHub</a></p>
+      <p>Video clips and annotations: <a href="https://epic-kitchens.github.io/">EPIC-KITCHENS-100</a> (Damen et al., IJCV 2022), CC BY-NC 4.0, shown here for non-commercial research.</p>
+    </div>
+    <p><a href="#top">Back to top ↑</a></p>
+  </div>
+</footer>
+
+<script src="assets/data/demo.js"></script>
+<script src="assets/js/site.js"></script>
+<script src="assets/js/charts.js"></script>
+<script src="assets/js/demo.js"></script>
+</body>
+</html>
