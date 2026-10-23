@@ -1,0 +1,364 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Mnemo documentation</title>
+  <meta name="description" content="Install, run and reproduce Mnemo: commands, configuration, architecture, the diary format, experiments and licences.">
+  <meta name="theme-color" content="#f7f6f2">
+  <link rel="icon" href="assets/img/favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/site.css">
+  <script>try { var t = localStorage.getItem("mnemo-theme"); if (t) document.documentElement.dataset.theme = t; } catch (e) {}</script>
+</head>
+<body>
+
+<header class="bar" id="top">
+  <div class="wrap">
+    <a class="brand" href="index.html" aria-label="Mnemo home"><b>Mnemo</b><span>DOCS</span></a>
+    <button class="menu-btn" aria-expanded="false" aria-controls="nav">Menu</button>
+    <nav class="nav" id="nav" aria-label="Site">
+      <a href="index.html">Overview</a>
+      <a href="index.html#results">Results</a>
+      <a href="index.html#demo">Demo</a>
+      <a href="docs.html" class="active">Docs</a>
+      <a href="https://github.com/slikhithreddy22/MNemo">GitHub ↗</a>
+      <button class="icon-btn theme-toggle" aria-label="Switch colour theme" title="Switch colour theme">
+        <svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="6.25" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M8 1.75a6.25 6.25 0 0 1 0 12.5z" fill="currentColor"/></svg>
+      </button>
+    </nav>
+  </div>
+</header>
+
+<div class="wrap docs">
+  <aside class="toc" aria-label="On this page">
+    <p class="tl-t">Get started</p>
+    <ol>
+      <li><a href="#overview">Overview</a></li>
+      <li><a href="#install">Installation</a></li>
+      <li><a href="#quickstart">Quick start</a></li>
+      <li><a href="#kaggle">Running on Kaggle</a></li>
+    </ol>
+    <p class="tl-t">Reference</p>
+    <ol>
+      <li><a href="#commands">Commands</a></li>
+      <li><a href="#config">Configuration</a></li>
+      <li><a href="#architecture">Architecture</a></li>
+      <li><a href="#diary">Diary format</a></li>
+      <li><a href="#hoitcn">The small model</a></li>
+    </ol>
+    <p class="tl-t">Research</p>
+    <ol>
+      <li><a href="#reproduce">Reproducing results</a></li>
+      <li><a href="#own">Your own footage</a></li>
+      <li><a href="#privacy">Privacy</a></li>
+      <li><a href="#limits">Limitations</a></li>
+      <li><a href="#licences">Data and licences</a></li>
+    </ol>
+  </aside>
+
+  <article class="doc">
+    <div class="eyebrow">Documentation</div>
+    <h1>Running and building on Mnemo</h1>
+    <p>Mnemo turns first-person video into a short, time-stamped text diary of what the wearer did, then answers
+      questions from that diary alone. This page covers installation, every command and setting, the architecture,
+      and how to reproduce the reported numbers. The source is on
+      <a href="https://github.com/slikhithreddy22/MNemo">GitHub</a>.</p>
+
+    <section id="overview">
+      <h2>Overview</h2>
+      <p>There are two ways to use Mnemo:</p>
+      <ul>
+        <li><b>Diary mode (GPU).</b> Any action, any object. HOI-TCN decides which 4-second windows are worth
+          describing. Qwen3-VL-4B describes them in fixed lines, an object-state memory adds opens and closes, and
+          questions are answered from the diary with times. This is the mode behind the results on the home page.</li>
+        <li><b>Tracker mode (CPU).</b> The original pick-up / put-down tracker for a few personal objects (keys,
+          wallet, phone, pill bottle). It remembers the place where each object was put down and learns daily
+          habits.</li>
+      </ul>
+      <p>In the ENGRAM paper (in preparation), the method is called <i>Egocentric Neural Grounded Retrieval of Actions
+        and Moments</i>, and the diary is the <i>reference diary</i>.</p>
+    </section>
+
+    <section id="install">
+      <h2>Installation</h2>
+      <div class="code"><button class="copy">Copy</button>
+<pre>git clone https://github.com/slikhithreddy22/MNemo.git
+cd MNemo
+python -m venv .venv && source .venv/bin/activate
+pip install -r requirements.txt --extra-index-url https://download.pytorch.org/whl/cpu
+python -m pytest</pre></div>
+      <ul>
+        <li>Tested on Linux with Python 3.14. The test suite has 87 tests on synthetic data, so no dataset is needed.</li>
+        <li>The trained trigger ships in the repository (<code>models/hoi_tcn.pt</code>, 1 MB).</li>
+        <li>The MediaPipe hand model and YOLOv8n download automatically the first time they are used.</li>
+        <li>For diary mode, also install <code>pip install "transformers&gt;=4.57" accelerate</code>.</li>
+      </ul>
+      <p class="note"><b>Linux audio note.</b> On some systems, MediaPipe's import of <code>sounddevice</code> crashes
+        through PortAudio. Mnemo uses no audio, so <code>modules/hand_detector.py</code> replaces that module with an
+        empty stub.</p>
+    </section>
+
+    <section id="quickstart">
+      <h2>Quick start</h2>
+      <h3>Diary mode</h3>
+      <div class="code"><button class="copy">Copy</button>
+<pre>python mnemo.py log kitchen.mp4 --start "2026-10-17 08:30" --trigger
+python mnemo.py activities
+python mnemo.py qa "did I close the fridge?" --llm</pre></div>
+      <ul>
+        <li><code>--trigger</code> lets HOI-TCN choose the windows the VLM describes. Without it, every window is
+          described.</li>
+        <li>Without <code>--llm</code>, <code>qa</code> lists the matching diary rows and needs no GPU.</li>
+        <li>Qwen3-VL-4B needs a 16 GB GPU such as a T4. <code>Qwen/Qwen3-VL-2B-Instruct</code> is smaller and faster.</li>
+      </ul>
+      <h3>Tracker mode</h3>
+      <div class="code"><button class="copy">Copy</button>
+<pre>python mnemo.py run recording.mp4 --mode model --show
+python mnemo.py ask "where is my wallet?"
+python mnemo.py simulate --days 14
+python mnemo.py habits --simulated</pre></div>
+      <p><code>run 0 --show</code> uses a live camera. The habit demo runs on <b>simulated</b> history. Say so whenever
+        you present it.</p>
+    </section>
+
+    <section id="kaggle">
+      <h2>Running on Kaggle</h2>
+      <p>The free Kaggle T4 is enough for everything. Package the code with <code>python -m tools.make_colab_zip</code>,
+        upload <code>mnemo_code.zip</code> as a Kaggle dataset, and open a notebook with GPU T4 and internet turned on:</p>
+      <div class="table-wrap"><table>
+        <thead><tr><th>Notebook</th><th>What it does</th></tr></thead>
+        <tbody>
+          <tr><td><code>colab/mnemo_live_demo.ipynb</code></td><td>Any first-person video → diary → type your own questions. The video should be 2–3 minutes; processing takes about 1.5× its length.</td></tr>
+          <tr><td><code>colab/mnemo_kaggle.ipynb</code></td><td>The full benchmark: trigger vs. fixed rate, state memory, question answering, and the whole-morning test.</td></tr>
+          <tr><td><code>colab/mnemo_ego4d.ipynb</code></td><td>The Ego4D Natural Language Queries test. Needs an approved Ego4D licence; the AWS keys go in Kaggle Secrets.</td></tr>
+          <tr><td><code>colab/mnemo_vlm.ipynb</code></td><td>Diary mode on Google Colab.</td></tr>
+          <tr><td><code>colab/mnemo_train.ipynb</code></td><td>Trains HOI-TCN on public datasets.</td></tr>
+        </tbody>
+      </table></div>
+    </section>
+
+    <section id="commands">
+      <h2>Commands</h2>
+      <p>Every command is a subcommand of <code>python mnemo.py</code>. The global option <code>--db PATH</code>
+        selects the database (default <code>outputs/mnemo.db</code>).</p>
+      <div class="table-wrap"><table>
+        <thead><tr><th>Command</th><th>Main options</th><th>What it does</th></tr></thead>
+        <tbody>
+          <tr><td><code>log SOURCE</code></td><td><code>--start</code> <code>--trigger</code> <code>--threshold</code> <code>--model</code> <code>--max-seconds</code> <code>--checkpoint</code></td><td>Stage 1: video → diary, using the vision-language model</td></tr>
+          <tr><td><code>qa QUESTION</code></td><td><code>--llm</code> <code>--model</code> <code>--now</code></td><td>Stage 2: answer from the diary, or list matching rows</td></tr>
+          <tr><td><code>activities</code></td><td><code>--limit</code></td><td>Print the diary</td></tr>
+          <tr><td><code>run SOURCE</code></td><td><code>--mode rules|model</code> <code>--show</code> <code>--start</code> <code>--objects</code> <code>--no-landmarks</code></td><td>Tracker mode on a video file or a camera index</td></tr>
+          <tr><td><code>ask QUESTION</code></td><td><code>--now</code> <code>--simulated</code></td><td>"Where is X?" from tracker events</td></tr>
+          <tr><td><code>events</code></td><td><code>--limit</code> <code>--simulated</code></td><td>List tracker events</td></tr>
+          <tr><td><code>enroll</code></td><td><code>--dir</code> <code>--check</code> <code>--check-only</code></td><td>Build the landmark index from short clips of each place</td></tr>
+          <tr><td><code>habits</code></td><td><code>--now</code> <code>--simulated</code></td><td>Learned routines and missed-routine alerts</td></tr>
+          <tr><td><code>simulate</code></td><td><code>--days</code> <code>--end</code> <code>--no-miss</code></td><td>Write simulated history to a separate database</td></tr>
+        </tbody>
+      </table></div>
+    </section>
+
+    <section id="config">
+      <h2>Configuration</h2>
+      <p>Every setting lives in <code>config.py</code>. Values marked <code>TUNE</code> there are starting points to
+        measure on your own footage. The main ones:</p>
+      <div class="table-wrap"><table>
+        <thead><tr><th>Setting</th><th>Default</th><th>Meaning</th></tr></thead>
+        <tbody>
+          <tr><td><code>VLM_MODEL</code></td><td><code>Qwen/Qwen3-VL-4B-Instruct</code></td><td>The model that describes windows and answers questions</td></tr>
+          <tr><td><code>VLM_WINDOW_S</code></td><td>4.0</td><td>Seconds of video per description</td></tr>
+          <tr><td><code>VLM_FRAMES</code> / <code>VLM_FRAME_W</code></td><td>8 / 448</td><td>Frames per window, and their width in pixels</td></tr>
+          <tr><td><code>VLM_TRACK_STATES</code></td><td>True</td><td>Object-state memory: open/closed, on/off, re-checks</td></tr>
+          <tr><td><code>VLM_MAX_ACTIONS</code></td><td>8</td><td>Maximum actions per window (stops repetition loops)</td></tr>
+          <tr><td><code>STATE_CHECK_MAX_AGE_S</code></td><td>600</td><td>How long an open object keeps being re-checked</td></tr>
+          <tr><td><code>QA_MAX_LOG_LINES</code></td><td>60</td><td>Diary rows given to the model when it answers</td></tr>
+          <tr><td><code>GATE_THRESHOLD</code></td><td>0.6</td><td>Trigger threshold τ on the window score</td></tr>
+          <tr><td><code>GATE_HEARTBEAT_S</code></td><td>20.0</td><td>Describe at least one window this often</td></tr>
+          <tr><td><code>PROCESS_FPS</code> / <code>PROCESS_WIDTH</code></td><td>10 / 640</td><td>Frame rate and width for perception</td></tr>
+          <tr><td><code>OBJECT_BACKEND</code></td><td><code>auto</code></td><td>Fine-tuned YOLO if present, else YOLO-World, else COCO</td></tr>
+          <tr><td><code>LANDMARK_MIN_SIM</code></td><td>0.80</td><td>Below this similarity, a place is "unknown" (tracker mode)</td></tr>
+        </tbody>
+      </table></div>
+    </section>
+
+    <section id="architecture">
+      <h2>Architecture</h2>
+      <p>The always-on lane (perception and HOI-TCN) runs on every frame on the CPU. The on-demand lane (the VLM)
+        runs only for windows the trigger selects, plus a heartbeat every 20 s. Frames are held in RAM only while
+        their window is processed. See the <a href="index.html#method">methodology</a> for the full picture.</p>
+      <div class="table-wrap"><table>
+        <thead><tr><th>Part</th><th>Code</th></tr></thead>
+        <tbody>
+          <tr><td>Command line, settings</td><td><code>mnemo.py</code>, <code>config.py</code></td></tr>
+          <tr><td>Video source, RAM-only buffer</td><td><code>modules/video_source.py</code></td></tr>
+          <tr><td>Perception: hands, objects, camera motion</td><td><code>modules/hand_detector.py</code>, <code>object_detector.py</code>, <code>ego_motion.py</code>, <code>perception.py</code></td></tr>
+          <tr><td>105-number feature per frame</td><td><code>modules/features.py</code></td></tr>
+          <tr><td>HOI-TCN model and training</td><td><code>model/architecture.py</code>, <code>train.py</code>, <code>evaluate.py</code>, <code>metrics.py</code></td></tr>
+          <tr><td>Interaction trigger</td><td><code>modules/hoi_gate.py</code></td></tr>
+          <tr><td>Stage 1: VLM describer and state memory</td><td><code>modules/vlm_logger.py</code></td></tr>
+          <tr><td>Diary and event store (SQLite)</td><td><code>modules/storage.py</code></td></tr>
+          <tr><td>Stage 2: grounded answers, moment search</td><td><code>query/llm_qa.py</code>, <code>query/locate.py</code></td></tr>
+          <tr><td>Tracker mode: rules, places, habits</td><td><code>modules/interaction.py</code>, <code>landmarks.py</code>, <code>habits.py</code>, <code>query/query_engine.py</code></td></tr>
+          <tr><td>Experiments</td><td><code>evaluation/</code></td></tr>
+          <tr><td>Dataset fetchers, labelling, demo video</td><td><code>tools/</code></td></tr>
+        </tbody>
+      </table></div>
+    </section>
+
+    <section id="diary">
+      <h2>Diary format</h2>
+      <p>The diary is one SQLite table, <code>activities</code>, with one row per action. A 2.4-hour morning produced
+        636 rows in a 240 kB file.</p>
+      <div class="table-wrap"><table>
+        <thead><tr><th>Column</th><th>Meaning</th></tr></thead>
+        <tbody>
+          <tr><td><code>ts_start</code>, <code>ts_end</code></td><td>Start and end of the window, in local time</td></tr>
+          <tr><td><code>verb</code></td><td>The action, from a fixed list of everyday verbs. Empty when nothing was done with the hands (place only).</td></tr>
+          <tr><td><code>object</code></td><td>The object acted on</td></tr>
+          <tr><td><code>place</code></td><td>Where the wearer was</td></tr>
+          <tr><td><code>where_</code></td><td>Where the object is or ended up</td></tr>
+          <tr><td><code>raw</code></td><td>The model's full answer, kept for checking</td></tr>
+          <tr><td><code>source</code></td><td>Which video produced the row; rows derived from a state change are marked as such</td></tr>
+        </tbody>
+      </table></div>
+      <p>For each window, the VLM fills in fixed lines, which are then parsed into rows:</p>
+<pre>PLACE: kitchen counter
+STATE: fridge = open
+DID: put | milk | fridge</pre>
+    </section>
+
+    <section id="hoitcn">
+      <h2>The small model: HOI-TCN</h2>
+      <ul>
+        <li><b>What it is.</b> A causal temporal convolutional network. It gives each frame a probability of
+          <i>pick-up</i>, <i>put-down</i> or <i>none</i>.</li>
+        <li><b>Input.</b> 105 numbers per frame: 45 per hand (presence, wrist position, landmarks relative to the
+          wrist, velocity relative to the background), 13 for the tracked object nearest a hand, and 2 for camera
+          motion.</li>
+        <li><b>Layers.</b> One encoder per modality (64, 32 and 8 units), a projection to 96 channels, and four
+          residual blocks of causal convolutions (kernel 3, dilation 1, 2, 4, 8). The receptive field is 61 frames,
+          about 6 s.</li>
+        <li><b>Size.</b> 240,252 parameters.</li>
+        <li><b>Window score.</b> The score is the maximum of 1 − P(none) over the window. A window is sent on when
+          its score is at least τ, or when 20 s have passed since the last call.</li>
+      </ul>
+      <p>The convolutions only look at past frames, so the same network runs live, frame by frame. A test checks
+        that streaming output equals full-sequence output.</p>
+      <h3>Training</h3>
+      <ul>
+        <li><b>Data.</b> EPIC-KITCHENS-100 pieces rich in take and put actions, split by person: 68 pieces from 22
+          people for training, 16 from 5 others for validation and 16 from another 5 for testing.</li>
+        <li><b>Setup.</b> AdamW (lr 10⁻³, weight decay 10⁻³, cosine schedule), batches of 64. The loss is
+          class-weighted cross-entropy plus a holding head with weight 0.5. Whole modalities are dropped at random
+          (p = 0.1). Early stopping uses validation event F1.</li>
+        <li><b>Charades-Ego</b> was tried, but it lowered put-down accuracy, so the final model uses EPIC-KITCHENS-100
+          only.</li>
+      </ul>
+      <div class="code"><button class="copy">Copy</button>
+<pre>python -m model.train --features data/features/epic --batch-size 64 --out models/hoi_tcn.pt
+python -m model.evaluate --checkpoint models/hoi_tcn.pt --features data/features/epic --split test</pre></div>
+      <p>Test results on held-out people: F1 0.529, precision 0.446, recall 0.652. The ablation table is on the
+        <a href="index.html#results">results</a> section of the home page.</p>
+    </section>
+
+    <section id="reproduce">
+      <h2>Reproducing the results</h2>
+      <ol>
+        <li>Run <code>colab/mnemo_kaggle.ipynb</code> on a Kaggle T4. The VLM runs once over every window, and each
+          system (every window, trigger at each threshold, every N-th window, with and without states) is replayed
+          from that single pass. All systems are therefore scored on the same model outputs.</li>
+        <li>Download <code>mnemo_results.zip</code> and unzip it.</li>
+        <li>Draw the figures:
+<pre>python -m evaluation.make_figures --results &lt;unzipped folder&gt; --out docs/figures</pre></li>
+      </ol>
+      <ul>
+        <li><b>Test set.</b> 20 random one-minute clips from EPIC-KITCHENS-100 participants P02, P06, P08, P14 and P26.
+          None of them were used in training.</li>
+        <li><b>Validation people.</b> P04, P21, P22, P27 and P31.</li>
+        <li><b>The threshold.</b> τ = 0.6 was read off the test curve, which is why every threshold is reported.</li>
+      </ul>
+      <div class="table-wrap"><table>
+        <thead><tr><th>Experiment</th><th>Code</th></tr></thead>
+        <tbody>
+          <tr><td>Benchmark: one VLM pass, replayed for every system</td><td><code>evaluation/benchmark.py</code></td></tr>
+          <tr><td>Diary accuracy against EPIC ground truth</td><td><code>evaluation/log_accuracy.py</code></td></tr>
+          <tr><td>Yes/no questions, incl. the direct-VLM baseline</td><td><code>evaluation/qa_benchmark.py</code></td></tr>
+          <tr><td>Whole-morning questions</td><td><code>evaluation/long_qa.py</code></td></tr>
+          <tr><td>Trigger settings on validation people</td><td><code>evaluation/tune_gate.py</code></td></tr>
+          <tr><td>Ego4D Natural Language Queries</td><td><code>evaluation/ego4d_nlq.py</code>, <code>tools/fetch_ego4d.py</code></td></tr>
+        </tbody>
+      </table></div>
+    </section>
+
+    <section id="own">
+      <h2>Using your own footage</h2>
+      <p>Tracker mode can be tuned for one home. You can mount the camera, fine-tune YOLO on your own objects,
+        enroll places from short clips, then label and evaluate your own videos. The step-by-step guide is
+        <a href="https://github.com/slikhithreddy22/MNemo/blob/main/docs/own_footage.md">docs/own_footage.md</a>.</p>
+    </section>
+
+    <section id="privacy">
+      <h2>Privacy</h2>
+      <ul>
+        <li>Frames are kept only in a RAM buffer, and only while their window is processed. Nothing visual is
+          written to disk. <code>tests/test_privacy_and_pipeline.py</code> runs the real pipeline with every
+          image-writing function blocked, and fails if any image or video file appears.</li>
+        <li>The diary is plain text in a local SQLite file, and the whole system can run on one machine.</li>
+        <li>The text can still be sensitive. A real deployment needs encryption and user-controlled deletion. The
+          guarantee covers stored data, not someone inspecting the running machine's memory.</li>
+      </ul>
+    </section>
+
+    <section id="limits">
+      <h2>Limitations</h2>
+      <ul>
+        <li><b>Kitchens and head-mounted cameras.</b> All quantitative results come from EPIC-KITCHENS-100, which was
+          filmed with head-mounted cameras. Mnemo is meant to be worn on the chest.</li>
+        <li><b>Strict scoring.</b> Recall of 26–31% reflects strict scoring, which requires the exact verb and noun
+          class. Read the numbers as comparisons between systems that share the same VLM outputs.</li>
+        <li><b>Small morning test.</b> It joins separate clips and has 38 questions.</li>
+        <li><b>Narrow trigger.</b> HOI-TCN knows only pick-up and put-down. Actions like stirring or wiping are caught
+          mainly by the heartbeat.</li>
+        <li><b>Not a medical device.</b> There has been no user study. Mnemo is a research prototype.</li>
+      </ul>
+    </section>
+
+    <section id="licences">
+      <h2>Data and licences</h2>
+      <p>The repository contains no videos and no dataset files.</p>
+      <div class="table-wrap"><table>
+        <thead><tr><th>Component</th><th>Licence</th><th>Used for</th></tr></thead>
+        <tbody>
+          <tr><td>Mnemo code</td><td>MIT</td><td>—</td></tr>
+          <tr><td><a href="https://epic-kitchens.github.io/">EPIC-KITCHENS-100</a></td><td>CC BY-NC 4.0</td><td>Training HOI-TCN, all results, the clips on this site</td></tr>
+          <tr><td><a href="https://ego4d-data.org/">Ego4D</a></td><td>Ego4D licence</td><td>NLQ test; clips must not be redistributed</td></tr>
+          <tr><td>MediaPipe Hand Landmarker</td><td>Apache-2.0</td><td>Hand landmarks</td></tr>
+          <tr><td>Ultralytics YOLOv8 / YOLO-World</td><td>AGPL-3.0</td><td>Object detection</td></tr>
+          <tr><td>Qwen3-VL-4B-Instruct</td><td>Apache-2.0</td><td>Describing windows, answering questions</td></tr>
+          <tr><td>OpenCLIP</td><td>MIT</td><td>Place matching in tracker mode</td></tr>
+        </tbody>
+      </table></div>
+      <ul>
+        <li>The HOI-TCN weights were trained on EPIC-KITCHENS-100 only. Treat them as non-commercial too.</li>
+        <li>Ultralytics is AGPL-3.0. If you distribute a product that includes it, its terms apply to that
+          product.</li>
+      </ul>
+    </section>
+  </article>
+</div>
+
+<footer class="foot">
+  <div class="wrap">
+    <div>
+      <p><b style="color:var(--ink);font-weight:500">Mnemo</b> · code under the MIT licence · <a href="https://github.com/slikhithreddy22/MNemo">GitHub</a></p>
+      <p>Video clips and annotations: <a href="https://epic-kitchens.github.io/">EPIC-KITCHENS-100</a> (Damen et al., IJCV 2022), CC BY-NC 4.0.</p>
+    </div>
+    <p><a href="#top">Back to top ↑</a></p>
+  </div>
+</footer>
+
+<script src="assets/js/site.js"></script>
+</body>
+</html>
